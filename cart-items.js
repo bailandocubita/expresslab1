@@ -4,9 +4,9 @@ const cartItems = express.Router();
 cartItems.use(express.json());
 
 items: [] = [
-    { id: 1, product: "soap", price: "3.99", quantity: 5 },
-    { id: 2, product: "shampoo", price: "4.95", quantity: 9},
-    { id: 3, product: "body wash", price: "5.25", quantity: 2 }
+    { id: 101, product: "soap", price: "3.99", quantity: 5 },
+    { id: 234, product: "shampoo", price: "4.95", quantity: 9},
+    { id: 357, product: "body wash", price: "5.25", quantity: 2 }
 ];
 
 cartItems.get("/cartItems", (req, res) => {
