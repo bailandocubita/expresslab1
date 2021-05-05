@@ -1,36 +1,85 @@
 const express = require("express");
-const cartItems = express.Router();
+const router = express.Router();
 
-cartItems.use(express.json());
+router.use(express.json());
 
-items: [] = [
-    { id: 101, product: "soap", price: "3.99", quantity: 5 },
-    { id: 234, product: "shampoo", price: "4.95", quantity: 9},
-    { id: 357, product: "body wash", price: "5.25", quantity: 2 }
+const cartItems = [
+    { id: 1, product: "soap", price: "3.99", quantity: 5 },
+    { id: 2, product: "shampoo", price: "4.95", quantity: 9},
+    { id: 3, product: "body wash", price: "5.25", quantity: 2 }
 ];
 
-cartItems.get("/cartItems", (req, res) => {
-    res.json("Getting all items..");
+router.get("/", (req, res) => {
+    res.json("a message");
 });
 
-cartItems.get("/cartItems/:id", (req, res) => {
+router.get("/cart-items", (req, res) => {
+    res.json(cartItems);
+});
+
+router.get("/cart-items/:id", (req, res) => {
     console.log(req.params.id);
-    res.json("Getting an item by id");
+    const found = cartItems.find(item => item.id === +req.params.id);
+// can also use "if (!found)""
+    if (found === undefined) {
+        res.status(404).send('The cart item cound not be found');
+    } else {
+        res.json(found);
+    }
+
+    res.json(found);
 });
 
-cartItems.post("/cartItems", (req, res) => {
+router.post("/cart-items", (req, res) => {
 
-    console.log(req.body);
+    const quantity = parseInt(req.body.quantity);
+    const price = parseInt(req.body.price);
 
-    res.json("Adding an item..");
+    if (!quantity) {
+        return res.status(404).send('Invalid quantity');
+    }
+
+    if (!price) {
+        return res.status(404).send('Invalid price');
+    }
+
+
+    const newItem = {
+        id: cartItems.length + 1,
+        product: req.body.product,
+        price: req.body.price,
+        quantity: req.body.quantity
+    };
+
+    cartItems.push(newItem);
+
+    res.status(201).json(newItem);
 });
 
-cartItems.put("/cartItems", (req, res) => {
-    res.json("Updating an item..");
+router.put("/cart-items/:id", (req, res) => {
+    const found = cartItems.find(item => item.id === +req.params.id);
+    
+    if (found) {
+        found.price = req.body.price;
+        found.quantity = req.body.quantity;
+        found.product = req.body.product;
+
+        res.json(found);
+    }
+
+    else {
+        res.status(404).send('The cart item cound not be found');
+    }
 });
 
-cartItems.delete("/cartItems", (req, res) => {
-    res.json("Deleting an item..");
+router.delete("/cart-items/:id", (req, res) => {
+    const found = cartItems.find(item => item.id === +req.params.id);
+
+    if (found) {
+        cartItems.splice(found, 1);
+
+        res.status(204).send('The requested items have been deleted.');
+    }
 });
 
-module.exports = cartItems;
+module.exports = router;

@@ -1,9 +1,9 @@
 const express = require("express");
-const cartItems = require("./cart-items");
+const cart = require("./cart-items");
 
 const app = express();
 
-app.use('/', cartItems);
+app.use('/', cart);
 
 const port = 3000;
 
